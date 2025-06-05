@@ -59,6 +59,21 @@ _METATRANSCRIPTOMIC = 'Metatranscriptomic'
 
 SS_SAMPLE_ID_KEY = 'Sample_ID'
 
+PROTOCOL_NAME_ILLUMINA = "Illumina"
+PROTOCOL_NAME_TELLSEQ = "TellSeq"
+
+# NB: These is a single variable that other tools, like
+# qp-knight-lab-processing can import; PLEASE add any new
+# standard notebook values here
+SAMPLE_SHEETS_BY_PROTOCOL = {
+    PROTOCOL_NAME_ILLUMINA: [
+        STANDARD_METAG_SHEET_TYPE,
+        STANDARD_METAT_SHEET_TYPE,
+        ABSQUANT_SHEET_TYPE],
+    PROTOCOL_NAME_TELLSEQ: [
+        TELLSEQ_METAG_SHEET_TYPE,
+        TELLSEQ_ABSQUANT_SHEET_TYPE]}
+
 
 # MappingProxyType is used to make the dictionary immutable.
 # NOTE that key order is (a) important and (b) preserved; as of Python 3.7,
@@ -1638,8 +1653,9 @@ class MetatranscriptomicSampleSheetv10(KLSampleSheet):
 
 
 def _parse_header(fp):
+    # https://stackoverflow.com/a/43586874
     df = pd.read_csv(fp, dtype="str", sep=",", header=None,
-                     names=range(100))
+                     names=range(100), engine='python')
 
     # pandas will have trouble reading a sample-sheet if the csv has a
     # variable number of columns. This occurs in legacy sheets when a user
@@ -1820,21 +1836,24 @@ def make_sample_sheet(metadata, table, sequencer, lanes, strict=None):
         If a value is omitted from this dictionary the values in square
         brackets are used as defaults.
 
-        - Bioinformatics: List of dictionaries describing each project's
-          attributes: Sample_Project, QiitaID, BarcodesAreRC, ForwardAdapter,
-          ReverseAdapter, HumanFiltering, library_construction_protocol,
-          experiment_design_description
+        - Bioinformatics: List of dictionaries, one per project, describing
+          each project's attributes: Sample_Project, QiitaID, BarcodesAreRC,
+          ForwardAdapter, ReverseAdapter, HumanFiltering,
+          library_construction_protocol, experiment_design_description - Note
+          that the requirements will depend on the SheetType.
         - Contact: List of dictionaries describing the e-mails to send to
           external stakeholders: Sample_Project, Email
-
+        - SheetType: str, sample sheet type
+        - SheetVersion: str, the version of the sheet
+        - Assay: assay type for the sequencing run. No default value will be
+          set, this is required.
+        - SampleContext: list, can be empty
         - IEMFileVersion: Illumina's Experiment Manager version [4]
         - Investigator Name: [Knight]
         - Experiment Name: [RKL_experiment]
         - Date: Date when the sheet is prepared [Today's date]
         - Workflow: how the sample sheet should be used [GenerateFASTQ]
         - Application: sample sheet's application [FASTQ Only]
-        - Assay: assay type for the sequencing run. No default value will be
-          set, this is required.
         - Description: additional information []
         - Chemistry: chemistry's description [Default]
         - read1: Length of forward read [151]

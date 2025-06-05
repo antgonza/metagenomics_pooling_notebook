@@ -75,6 +75,8 @@ INSTRUMENT_LOOKUP = pd.DataFrame({
                'Machine type': 'HiSeq/RR', 'run_center': 'IGM'},
     'LH00444': {'machine prefix': 'LH', 'Vocab': 'Illumina NovaSeq X',
                 'Machine type': 'NovaSeq', 'run_center': 'IGM'},
+    'SH00252': {'machine prefix': 'SH', 'Vocab': 'Illumina MiSeq i100',
+                'Machine type': 'MiSeq i100', 'run_center': 'IGM'},
     'MN01225': {'machine prefix': 'MN', 'Vocab': 'Illumina MiniSeq',
                 'Machine type': 'MiniSeq', 'run_center': 'CMI'}}).T
 

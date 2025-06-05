@@ -1837,17 +1837,22 @@ def make_sample_sheet(metadata, table, sequencer, lanes, strict=None):
         brackets are used as defaults.
 
         - Bioinformatics: List of dictionaries, one per project, describing
-          each project's attributes: Sample_Project, QiitaID, BarcodesAreRC,
-          ForwardAdapter, ReverseAdapter, HumanFiltering,
-          library_construction_protocol, experiment_design_description - Note
-          that the requirements will depend on the SheetType.
+          each project's attributes, containing at least: Sample_Project,
+          QiitaID, BarcodesAreRC, ForwardAdapter, ReverseAdapter,
+          HumanFiltering, library_construction_protocol,
+          experiment_design_description - Note that the requirements will
+          depend on the SheetType and many sheets require additional
+          field(s) such as contains_replicates.
         - Contact: List of dictionaries describing the e-mails to send to
           external stakeholders: Sample_Project, Email
         - SheetType: str, sample sheet type
         - SheetVersion: str, the version of the sheet
         - Assay: assay type for the sequencing run. No default value will be
           set, this is required.
-        - SampleContext: list, can be empty
+        - SampleContext: List of dictionaries, one per blank, containing
+          Sample_Name, PrimaryQiitaStudy, SecondaryQiitaStudies, and
+          Sample_Type. If empty, blanks are inferred from data by
+          sample name.
         - IEMFileVersion: Illumina's Experiment Manager version [4]
         - Investigator Name: [Knight]
         - Experiment Name: [RKL_experiment]
